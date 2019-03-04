@@ -18,7 +18,8 @@ Copy these [rtl-sdr-release/x64/]: rtlsdr.dll & libusb-1.0.dll into C:\Windows f
 Now we may run, this will produce text recognition results file [radio_log.txt]:
 ```
 python listen.py --freq=95000000 --gain=20 --ppm=56 --lang=ru-RU
-```
+The following was change as most laptops is to slow and get under run
+sample_rate_fm = 240000 was changed to 180000
 
 Some unnecessary help available:
 ```
