@@ -7,6 +7,9 @@ Run anaconda prompt, change dir to C:\fm2txt [c:] [cd \fm2txt], then run:
 ```
 pip install -r requirements.txt
 ```
+Ubuntu 18 <br>
+sudo pip3 install --upgrade speechrecognition<br>
+
 
 Last step is to copy 2 files from x64!!! osmocom rtl-sdr drivers: https://osmocom.org/attachments/download/2242/RelWithDebInfo.zip
 
