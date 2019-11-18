@@ -44,6 +44,8 @@ def recognize(stream_text):
         print("Could not request results from GSR service; {0}".format(e))
     # print('done')
 
+    with open("recording_of_radio_station.wav", "wb") as f:
+        f.write(audio_data.get_wav_data())
 
 def stream_audio(data: AudioStream):
     global args
