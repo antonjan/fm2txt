@@ -36,7 +36,11 @@ def recognize(stream_text):
     try:
         # result = recognizer.recognize_sphinx(audio_data)
         result = recognizer.recognize_google(audio_data, language=args.lang)
-        print(result)
+        print(result + " kk")
+        command1 = "hello satellite"
+        counter1 = result.find(command1)
+        if counter1 > 0:
+            print("<<<<<<Hellow Satellite was found>>>>>>>")
         logger(result)
     except sr.UnknownValueError:
         pass
@@ -72,7 +76,7 @@ def process(samples: SampleStream, sdr: RtlSdr) -> None:
 
     audio_signal = signal.decimate(demodulated_comercial, sample_rate_fm // audio_rate, zero_phase=True)
 #    audio_signal = np.int16(14000 * audio_signal)
-    audio_signal = np.int16(24000 * audio_signal)
+    audio_signal = np.int16(48000 * audio_signal)
 
     stream_audio(audio_signal.astype("int16").tobytes())
 
