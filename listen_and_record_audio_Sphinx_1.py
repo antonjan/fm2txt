@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from typing import List
 from rtlsdr import RtlSdr
+from minio import Minio
+from minio.error import (ResponseError, BucketAlreadyOwnedByYou,BucketAlreadyExists)
+
 import argparse
 import datetime
 import numpy as np
@@ -8,6 +11,9 @@ import pyaudio
 import scipy.signal as signal
 import speech_recognition as sr
 import threading
+
+# Initialize minioClient with an endpoint and access/secret keys.
+minioClient = Minio('localhost:9000',access_key='PX7Y4M4GOAW6ZM3VIRKN',secret_key='JBejQ+JU5ClGYkAGgROYJM9sN+LnLNxsA+cEE200',secure=False)
 
 SampleStream = List[float]
 AudioStream = List[int]
@@ -23,10 +29,10 @@ audio_output = pyaudio.PyAudio().open(format=pyaudio.paInt16, channels=1, rate=a
 
 def recognize(stream_text):
     global args
-    date_of_file = datetime.datetime.now().strftime("[ %d-%b-%Y %H:%M:%S ] ")
+    date_of_file = datetime.datetime.now().strftime("_%d-%b-%Y_%H:%M:%S_")
     def logger(s):
         date = datetime.datetime.now().strftime("[ %d-%b-%Y %H:%M:%S ] ")
-        f = open(date +'radio_log.txt', 'a+', encoding='utf-8')
+        f = open(date_of_file +'radio_log.txt', 'a+', encoding='utf-8')
         #f.write(datetime.datetime.now().strftime("[ %d-%b-%Y %H:%M:%S ] "))
         f.write(date)
         f.write(s)
@@ -37,7 +43,8 @@ def recognize(stream_text):
     audio_data = sr.AudioData(stream_text, audio_rate, 2)
     try:
         # result = recognizer.recognize_sphinx(audio_data)
-        result = recognizer.recognize_google(audio_data, language=args.lang)
+        #result = recognizer.recognize_google(audio_data, language=args.lang)
+        result = recognizer.recognize_sphinx(audio_data)
         print(result)
         logger(result)
     except sr.UnknownValueError:
@@ -45,8 +52,14 @@ def recognize(stream_text):
     except sr.RequestError as e:
         print("Could not request results from GSR service; {0}".format(e))
     # print('done')
+    #writhing Audio to File on disk	
     with open(date_of_file + "recording_of_radio_station.wav", "wb") as f:
         f.write(audio_data.get_wav_data())
+    # Put an object 'audio file name' with contents from 'Audiofale.wav'.
+    try:
+       print(minioClient.fput_object('radio', date_of_file + 'recording_of_radio_station.wav', '/home/anton/fm2txt/'+date_of_file +'recording_of_radio_station.wav'))
+    except ResponseError as err:
+       print(err)
 
 def stream_audio(data: AudioStream):
     global args
