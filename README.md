@@ -42,3 +42,10 @@ sdr.rs = 1024000
 List of supported languages and their codes: https://cloud.google.com/speech/docs/languages
 
 Recognition quality can be improved using paid Google, Microsoft, IBM or other services.
+
+Adding local Recognition.<br>
+sudo apt-get install -qq python python-dev python-pip build-essential swig git libpulse-dev libasound2-dev
+sudo -H pip3 install pocketsphinx
+
+ 
+
